@@ -37,8 +37,6 @@ namespace DapperNetCore8_Api.Controllers
             }
             return Ok(ogrenci);
         }
-
-
         [HttpPost]
         [Route("PostOgrenci")]
         public async Task<IActionResult> PostOgrenci(Ogrenciler ogrenci)
@@ -76,8 +74,5 @@ namespace DapperNetCore8_Api.Controllers
             var affectedRows = await _connection.ExecuteAsync("DELETE FROM Ogrenciler WHERE id = @id", parameters);
             return affectedRows > 0 ? Ok() : NotFound();
         }
-
-
-       
     }
 }
