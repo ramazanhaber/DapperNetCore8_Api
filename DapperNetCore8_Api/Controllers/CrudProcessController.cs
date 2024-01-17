@@ -21,6 +21,8 @@ namespace DapperNetCore8_Api.Controllers
             _connection = connections.DefaultConnection; // ilk veri tabanı
             _databaseHelper = new AsyncDatabaseHelper(connections.SecondConnection); // ikinci veri tabanı
             _configuration = configuration;
+
+
         }
 
         [HttpPost]
@@ -35,11 +37,51 @@ namespace DapperNetCore8_Api.Controllers
         [Route("GetOgrencilerGenelModel")]
         public async Task<ActionResult<GenelModel>> GetOgrencilerGenelModel()
         {
-            var ogrenciler = await _connection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
             GenelModel genelModel = new GenelModel();
-            genelModel.Data = ogrenciler;
+
+            try
+            {
+                var ogrenciler = await _connection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
+                genelModel.Data = ogrenciler;
+
+            }
+            catch (Exception ex)
+            {
+                genelModel.mesaj = "Başarısız";
+                genelModel.durum = false;
+                genelModel.hatamesaj = ex.Message;
+
+            }
             return Ok(genelModel);
+
         }
+
+        [HttpPost]
+        [Route("GetOgrencilerGenelModelHatali")]
+        public async Task<ActionResult<GenelModel>> GetOgrencilerGenelModelHatali()
+        {
+            GenelModel genelModel = new GenelModel();
+
+            try
+            {
+                var ogrenciler = await _connection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
+                genelModel.Data = ogrenciler;
+
+                string sayi = "0";
+                int sayi2 = 3 / Convert.ToInt32(sayi);
+
+            }
+            catch (Exception ex)
+            {
+                genelModel.mesaj = "Başarısız";
+                genelModel.durum = false;
+                genelModel.hatamesaj = ex.Message;
+
+            }
+            return Ok(genelModel);
+
+        }
+
         [HttpPost]
         [Route("GetOgrenciById")]
         public async Task<ActionResult<Ogrenciler>> GetOgrenciById(int id)
@@ -93,6 +135,20 @@ namespace DapperNetCore8_Api.Controllers
             bool sonuc = await _databaseHelper.ExecAsync(query);
             return Ok(json);
         }
+
+        [HttpPost]
+        [Route("imlementQuery")]
+        public async Task<IActionResult> imlementQuery()
+        {
+            var ogrenci = await _databaseHelper._connection.QuerySingleOrDefaultAsync<Ogrenciler>("SELECT * FROM Ogrenciler ");
+            if (ogrenci == null)
+            {
+                return NotFound();
+            }
+            return Ok(ogrenci);
+
+        }
+
         [HttpPost]
         [Route("dinamikconnection")]
         public async Task<IActionResult> dinamikconnection(string query)

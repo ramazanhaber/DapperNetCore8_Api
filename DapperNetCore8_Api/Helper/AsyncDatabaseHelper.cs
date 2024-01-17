@@ -5,7 +5,7 @@ namespace DapperNetCore8_Api.Helper
 {
     public class AsyncDatabaseHelper
     {
-        private readonly IDbConnection _connection;
+     public IDbConnection _connection;
         public AsyncDatabaseHelper(IDbConnection connection)
         {
             _connection = connection;
