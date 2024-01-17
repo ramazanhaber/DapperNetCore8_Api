@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using DapperNetCore8_Api.Helper;
 using DapperNetCore8_Api.Models;
 using Microsoft.AspNetCore.Authorization;
