@@ -2,11 +2,7 @@
 using Dapper.Contrib.Extensions;
 using DapperNetCore8_Api.Helper;
 using DapperNetCore8_Api.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
 using System.Data;
 namespace DapperNetCore8_Api.Controllers
 {
@@ -22,15 +18,13 @@ namespace DapperNetCore8_Api.Controllers
             _connection = connections.DefaultConnection; // ilk veri tabanı
             _databaseHelper = new AsyncDatabaseHelper(connections.SecondConnection); // ikinci veri tabanı
             _configuration = configuration;
-
-
         }
 
-        [HttpPost]
+        [HttpGet] // HTTP methodunu Get olarak değiştirdik
         [Route("GetOgrenciler")]
         public async Task<ActionResult<IEnumerable<Ogrenciler>>> GetOgrenciler()
         {
-            var ogrenciler = await _connection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
+            var ogrenciler = await _connection.GetAllAsync<Ogrenciler>();
             return Ok(ogrenciler);
         }
 
@@ -39,11 +33,13 @@ namespace DapperNetCore8_Api.Controllers
         [Route("GetOgrenciById")]
         public async Task<ActionResult<Ogrenciler>> GetOgrenciById(int id)
         {
-            var ogrenci = await _connection.QuerySingleOrDefaultAsync<Ogrenciler>("SELECT * FROM Ogrenciler WHERE id = @id", new { id = id });
+            var ogrenci = await _connection.GetAsync<Ogrenciler>(id);
+
             if (ogrenci == null)
             {
                 return NotFound();
             }
+
             return Ok(ogrenci);
         }
         [HttpPost]
@@ -53,7 +49,6 @@ namespace DapperNetCore8_Api.Controllers
             await _connection.InsertAsync(ogrenci);
             return Ok();
         }
-
         [HttpPost]
         [Route("UpdateOgrenci")]
         public async Task<IActionResult> UpdateOgrenci(Ogrenciler ogrenci)
@@ -65,13 +60,20 @@ namespace DapperNetCore8_Api.Controllers
         [Route("DeleteOgrenci")]
         public async Task<IActionResult> DeleteOgrenci(int id)
         {
+            var result = await _connection.DeleteAsync<Ogrenciler>(new Ogrenciler { id = id });
+            return result ? Ok() : NotFound();
 
-            await _connection.DeleteAsync<Ogrenciler>(new Ogrenciler { id = id });
-
-            return Ok();
         }
 
+        [HttpPost]
+        [Route("DeleteOgrenciProc")]
+        public async Task<IActionResult> DeleteOgrenciProc(int id)
+        {
+            var affectedRows = await _connection.ExecuteAsync("deleteogrenci", new { id = id }, commandType: CommandType.StoredProcedure);
 
+            return affectedRows > 0 ? Ok() : NotFound();
+
+        }
 
         [HttpPost]
         [Route("DeleteOgrenciDynamicParameters")]
@@ -79,12 +81,9 @@ namespace DapperNetCore8_Api.Controllers
         {
             var parameters = new DynamicParameters();
             parameters.Add("@id", id, DbType.Int32);
+            var affectedRows = await _connection.ExecuteAsync("DELETE FROM Ogrenciler WHERE id = @id", parameters);
+            return affectedRows > 0 ? Ok() : NotFound();
 
-            await _connection.ExecuteAsync("DELETE FROM Ogrenciler WHERE id = @id", parameters);
-
-            return Ok();
         }
-
-
     }
 }
