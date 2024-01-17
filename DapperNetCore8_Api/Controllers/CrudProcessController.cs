@@ -26,14 +26,16 @@ namespace DapperNetCore8_Api.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
         [Route("GetOgrenciler")]
         public async Task<ActionResult<IEnumerable<Ogrenciler>>> GetOgrenciler()
         {
             var ogrenciler = await _connection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
             return Ok(ogrenciler);
         }
+
+
         [HttpPost]
+        //[Authorize]
         [Route("GetOgrencilerGenelModel")]
         public async Task<ActionResult<GenelModel>> GetOgrencilerGenelModel()
         {
@@ -158,6 +160,8 @@ namespace DapperNetCore8_Api.Controllers
             var ogrenciler = await dbConnection.QueryAsync<Ogrenciler>("SELECT * FROM Ogrenciler");
             return Ok(ogrenciler);
         }
+
+
         [HttpPost]
         [Route("Data2")]
         public async Task<ActionResult<GenelModel>> Data2()
