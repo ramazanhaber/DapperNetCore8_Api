@@ -15,31 +15,26 @@ namespace DapperNetCore8_Api.Controllers
         private readonly IConfiguration _configuration;
         public CrudProcess2Controller(DatabaseConnections connections, IConfiguration configuration)
         {
-            _connection = connections.DefaultConnection; // ilk veri tabanı
+            _connection = connections.DefaultConnection; 
             _databaseHelper = new AsyncDatabaseHelper(connections.SecondConnection); // ikinci veri tabanı
             _configuration = configuration;
         }
-
-        [HttpGet] // HTTP methodunu Get olarak değiştirdik
+        [HttpGet] 
         [Route("GetOgrenciler")]
         public async Task<ActionResult<IEnumerable<Ogrenciler>>> GetOgrenciler()
         {
             var ogrenciler = await _connection.GetAllAsync<Ogrenciler>();
             return Ok(ogrenciler);
         }
-
-
         [HttpPost]
         [Route("GetOgrenciById")]
         public async Task<ActionResult<Ogrenciler>> GetOgrenciById(int id)
         {
             var ogrenci = await _connection.GetAsync<Ogrenciler>(id);
-
             if (ogrenci == null)
             {
                 return NotFound();
             }
-
             return Ok(ogrenci);
         }
         [HttpPost]
@@ -62,19 +57,14 @@ namespace DapperNetCore8_Api.Controllers
         {
             var result = await _connection.DeleteAsync<Ogrenciler>(new Ogrenciler { id = id });
             return result ? Ok() : NotFound();
-
         }
-
         [HttpPost]
         [Route("DeleteOgrenciProc")]
         public async Task<IActionResult> DeleteOgrenciProc(int id)
         {
             var affectedRows = await _connection.ExecuteAsync("deleteogrenci", new { id = id }, commandType: CommandType.StoredProcedure);
-
             return affectedRows > 0 ? Ok() : NotFound();
-
         }
-
         [HttpPost]
         [Route("DeleteOgrenciDynamicParameters")]
         public async Task<IActionResult> DeleteOgrenciDynamicParameters(int id)
@@ -83,7 +73,6 @@ namespace DapperNetCore8_Api.Controllers
             parameters.Add("@id", id, DbType.Int32);
             var affectedRows = await _connection.ExecuteAsync("DELETE FROM Ogrenciler WHERE id = @id", parameters);
             return affectedRows > 0 ? Ok() : NotFound();
-
         }
     }
 }
