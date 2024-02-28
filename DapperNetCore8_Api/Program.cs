@@ -1,9 +1,11 @@
 using DapperNetCore8_Api.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Data;
+using System.IO.Compression;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -60,8 +62,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest; // Sýkýþtýrma seviyesi
+});
+
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<GzipCompressionProvider>(); // gzip sýkýþtýrma saðlayýcýsýný ekler
+});
+
+
 var app = builder.Build();
 
+app.UseResponseCompression();
 
 
 app.UseCors(builder => builder
