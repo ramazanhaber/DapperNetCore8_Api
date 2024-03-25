@@ -10,10 +10,16 @@ namespace DapperNetCore8_Api.Repository
 
         private readonly IDbConnection _connection;
         private readonly IConfiguration _configuration;
+
+        private readonly AsyncDatabaseHelper _databaseHelper;
+
         public GenericRepository(DatabaseConnections connections, IConfiguration configuration)
         {
             _connection = connections.DefaultConnection;
             _configuration = configuration;
+
+            _databaseHelper = new AsyncDatabaseHelper(connections.SecondConnection); // ikinci veri tabanı
+
         }
 
 
