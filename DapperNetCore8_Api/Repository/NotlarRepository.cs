@@ -7,7 +7,7 @@ using System.Data;
 
 namespace DapperNetCore8_Api.Repository
 {
-    public class NotlarRepository :INotlarRepository
+    public class NotlarRepository :INotlarRepository // bunuda genericrepos dan türetebilirsin
     {
         private readonly IDbConnection _connection;
         private readonly IConfiguration _configuration;
