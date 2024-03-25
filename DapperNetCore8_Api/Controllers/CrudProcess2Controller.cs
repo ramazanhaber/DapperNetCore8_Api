@@ -38,10 +38,10 @@ namespace DapperNetCore8_Api.Controllers
             return Ok(ogrenci);
         }
         [HttpPost]
-        [Route("PostOgrenci")]
-        public async Task<IActionResult> PostOgrenci(Ogrenciler ogrenci)
+        [Route("AddOgrenci")]
+        public async Task<IActionResult> AddOgrenci(Ogrenciler ogrenci)
         {
-            await _connection.InsertAsync(ogrenci);
+             await _connection.InsertAsync(ogrenci);
             return Ok();
         }
         [HttpPost]

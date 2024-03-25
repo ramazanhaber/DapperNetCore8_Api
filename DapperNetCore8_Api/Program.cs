@@ -1,4 +1,7 @@
 using DapperNetCore8_Api.Helper;
+using DapperNetCore8_Api.Interfaces;
+using DapperNetCore8_Api.Models;
+using DapperNetCore8_Api.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Data.SqlClient;
@@ -34,6 +37,12 @@ IDbConnection secondConnection = new SqlConnection(secondConnectionString);
 
 
 builder.Services.AddSingleton(new DatabaseConnections(defaultConnection, secondConnection));
+
+builder.Services.AddScoped<IOgrencilerRepository, OgrencilerRepository>();
+builder.Services.AddScoped<INotlarRepository, NotlarRepository>();
+builder.Services.AddScoped<IDerslerRepository, DerslerRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 
 builder.Services.AddSwaggerGen(c =>
